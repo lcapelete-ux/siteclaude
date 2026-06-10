@@ -19,13 +19,6 @@ import {
   Star,
   Send,
   Loader2,
-  Fence,
-  Logs,
-  Warehouse,
-  UtilityPole,
-  Trees,
-  Layers,
-  MessageCircle,
 } from "lucide-react";
 import AdminDashboard from "./components/AdminDashboard";
 import AdminLoginModal from "./components/AdminLoginModal";
@@ -113,99 +106,6 @@ const initialImages: SiteImages = {
     ideias: []
   }
 };
-
-interface ProductLine {
-  key: string;
-  name: string;
-  length: string;
-  maxMeters: number | null;
-  barWidth: number;
-  bitolas: string;
-  options: string;
-  description: string;
-  uses: string[];
-  icon: React.ReactNode;
-  popular?: boolean;
-}
-
-const productLines: ProductLine[] = [
-  {
-    key: "mouroes",
-    name: "Mourões",
-    length: "2,20 m",
-    maxMeters: 2.2,
-    barWidth: 26,
-    bitolas: "4 a 14 cm",
-    options: "6 bitolas",
-    description: "A base da cerca rural. Fincados direto no solo, resistem décadas sem apodrecer graças ao tratamento CCA.",
-    uses: ["Cercas de arame", "Alambrados", "Vinhedos e pomares"],
-    icon: <Fence className="w-6 h-6" />,
-    popular: true,
-  },
-  {
-    key: "esticadores",
-    name: "Esticadores",
-    length: "2,50 m",
-    maxMeters: 2.5,
-    barWidth: 40,
-    bitolas: "10 a 32 cm",
-    options: "10 bitolas",
-    description: "Os pontos de força da cerca: cantos, mudanças de direção e fim de linha, segurando toda a tração dos fios.",
-    uses: ["Cantos de cerca", "Porteiras", "Reforço de tração"],
-    icon: <Logs className="w-6 h-6" />,
-  },
-  {
-    key: "palanques",
-    name: "Palanques",
-    length: "3,20 a 7 m",
-    maxMeters: 7,
-    barWidth: 36,
-    bitolas: "10 a 32 cm",
-    options: "+50 medidas",
-    description: "Altura e robustez para estruturas pecuárias e construções rurais que precisam aguentar peso e impacto.",
-    uses: ["Currais e mangueiros", "Barracões", "Cocheiras"],
-    icon: <Warehouse className="w-6 h-6" />,
-  },
-  {
-    key: "postes",
-    name: "Postes",
-    length: "8 a 12 m",
-    maxMeters: 12,
-    barWidth: 32,
-    bitolas: "10 a 32 cm",
-    options: "+45 medidas",
-    description: "Para redes elétricas, iluminação e telefonia em propriedades rurais, dentro do padrão ABNT NBR 9480.",
-    uses: ["Eletrificação rural", "Iluminação", "Telefonia"],
-    icon: <UtilityPole className="w-6 h-6" />,
-  },
-  {
-    key: "varas",
-    name: "Varas",
-    length: "2,50 a 8 m",
-    maxMeters: 8,
-    barWidth: 16,
-    bitolas: "4 a 12 cm",
-    options: "17 medidas",
-    description: "Peças finas e versáteis para estruturas leves, paisagismo e acabamentos rústicos.",
-    uses: ["Pergolados", "Estufas e hortas", "Cercas roliças"],
-    icon: <Trees className="w-6 h-6" />,
-  },
-  {
-    key: "serrada",
-    name: "Serrada e Ripões",
-    length: "Por metro",
-    maxMeters: null,
-    barWidth: 64,
-    bitolas: "Vários perfis",
-    options: "Vigas, pranchas, caibros e ripas",
-    description: "Peças serradas sob medida para telhados, decks e acabamentos, com a mesma proteção CCA.",
-    uses: ["Telhados", "Decks", "Acabamentos"],
-    icon: <Layers className="w-6 h-6" />,
-  },
-];
-
-const woodGrain = "linear-gradient(90deg, #7c5226 0%, #c99c62 38%, #b3814a 62%, #6e4a22 100%)";
-const limeGrain = "linear-gradient(90deg, #789205 0%, #c5d953 40%, #afca0b 65%, #5b6906 100%)";
 
 const Logo = ({ className = "" }: { className?: string }) => (
   <div className={`flex items-center gap-3 ${className}`}>
@@ -467,7 +367,6 @@ export default function App() {
   const [lightbox, setLightbox] = useState<{ idx: number } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [activeProduct, setActiveProduct] = useState(0);
   const formRef = useRef<HTMLFormElement>(null);
 
   // Scroll listener for navbar
@@ -725,7 +624,6 @@ export default function App() {
             </div>
 
             <div className="hidden md:flex space-x-8 items-center">
-              <a href="#produtos" className="text-stone-200 hover:text-white font-medium transition-colors">Produtos</a>
               <a href="#sobre" className="text-stone-200 hover:text-white font-medium transition-colors">Sobre</a>
               <a href="#citriodora" className="text-stone-200 hover:text-white font-medium transition-colors">Citriodora</a>
               <a href="#processo" className="text-stone-200 hover:text-white font-medium transition-colors">Processo</a>
@@ -755,7 +653,6 @@ export default function App() {
             >
               <div className="px-4 pt-2 pb-4 space-y-1">
                 {[
-                  { href: "#produtos", label: "Produtos" },
                   { href: "#sobre", label: "Sobre" },
                   { href: "#citriodora", label: "Citriodora" },
                   { href: "#processo", label: "Processo" },
@@ -862,182 +759,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* Produtos / Product Lines Section */}
-      <section id="produtos" className="py-24 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div className="text-center max-w-3xl mx-auto mb-16" {...fadeIn}>
-            <span className="inline-block text-brand-600 font-bold tracking-wider uppercase text-sm mb-3">
-              Nossos Produtos
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-stone-900 mb-4">
-              Do mourão de 2,20 m ao <span className="text-brand-600 whitespace-nowrap">poste de 12 m</span>
-            </h2>
-            <p className="text-lg text-stone-600 leading-relaxed">
-              Compare os tamanhos como se estivesse no nosso pátio: toque em cada peça
-              para ver medidas, bitolas e os usos mais comuns.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-end">
-            {/* Lumber yard scale chart */}
-            <motion.div {...fadeIn}>
-              <div className="relative h-[300px] sm:h-[380px]">
-                {/* Height gridlines */}
-                {[4, 8, 12].map((m) => (
-                  <div
-                    key={m}
-                    className="absolute left-0 w-full border-t border-dashed border-stone-200"
-                    style={{ bottom: `${(m / 12) * 100}%` }}
-                  >
-                    <span className="absolute -top-2.5 right-0 bg-white px-1 text-[10px] font-medium text-stone-400">
-                      {m} m
-                    </span>
-                  </div>
-                ))}
-
-                {/* Poles, bottom-aligned like a lumber yard */}
-                <div className="absolute inset-0 flex items-end justify-between gap-1 sm:gap-4 px-1 sm:px-4">
-                  {productLines.map((product, i) => {
-                    const isActive = activeProduct === i;
-                    return (
-                      <button
-                        key={product.key}
-                        onClick={() => setActiveProduct(i)}
-                        className="group relative flex-1 h-full flex items-end justify-center outline-none"
-                        aria-pressed={isActive}
-                        title={product.name}
-                      >
-                        {isActive && (
-                          <span className="absolute z-20 bg-[#183e26] text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-full shadow-lg whitespace-nowrap pointer-events-none"
-                            style={{ bottom: product.maxMeters ? `calc(${(product.maxMeters / 12) * 100}% + 10px)` : "60px" }}
-                          >
-                            {product.length}
-                          </span>
-                        )}
-                        {product.maxMeters ? (
-                          <motion.span
-                            initial={{ scaleY: 0 }}
-                            whileInView={{ scaleY: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.7, delay: i * 0.1, ease: "easeOut" }}
-                            className={`block origin-bottom rounded-t-full transition-all ${
-                              isActive ? "ring-4 ring-[#A1C913]/50" : "group-hover:brightness-110"
-                            }`}
-                            style={{
-                              height: `${(product.maxMeters / 12) * 100}%`,
-                              width: `min(${product.barWidth}px, 90%)`,
-                              background: isActive ? limeGrain : woodGrain,
-                            }}
-                          />
-                        ) : (
-                          <motion.span
-                            initial={{ scaleY: 0 }}
-                            whileInView={{ scaleY: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.7, delay: i * 0.1, ease: "easeOut" }}
-                            className={`origin-bottom flex flex-col justify-end gap-[4px] transition-all ${
-                              isActive ? "" : "group-hover:brightness-110"
-                            }`}
-                            style={{ width: `min(${product.barWidth}px, 90%)` }}
-                          >
-                            {[0, 1, 2, 3].map((p) => (
-                              <span
-                                key={p}
-                                className={`block w-full h-[9px] rounded-sm ${isActive ? "ring-2 ring-[#A1C913]/50" : ""}`}
-                                style={{ background: isActive ? limeGrain : woodGrain }}
-                              />
-                            ))}
-                          </motion.span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Ground line + labels */}
-              <div className="border-t-2 border-stone-300" />
-              <div className="flex justify-between gap-1 sm:gap-4 px-1 sm:px-4 mt-3">
-                {productLines.map((product, i) => (
-                  <button
-                    key={product.key}
-                    onClick={() => setActiveProduct(i)}
-                    className={`flex-1 text-center text-[10px] sm:text-xs font-bold leading-tight transition-colors ${
-                      activeProduct === i ? "text-brand-700" : "text-stone-500 hover:text-stone-800"
-                    }`}
-                  >
-                    {product.name}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Detail panel */}
-            <motion.div {...fadeIn}>
-              <motion.div
-                key={productLines[activeProduct].key}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35 }}
-                className="bg-stone-50 rounded-3xl border border-stone-200 shadow-sm p-8"
-              >
-                <div className="flex items-center gap-4 mb-5">
-                  <div className="w-[52px] h-[52px] shrink-0 rounded-2xl bg-[#183e26] text-[#A1C913] flex items-center justify-center">
-                    {productLines[activeProduct].icon}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-2xl font-bold text-stone-900">{productLines[activeProduct].name}</h3>
-                      {productLines[activeProduct].popular && (
-                        <span className="bg-[#A1C913] text-[#183e26] text-[10px] font-black tracking-wider px-2.5 py-0.5 rounded-full">
-                          MAIS PEDIDO
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-sm font-bold text-brand-700">{productLines[activeProduct].length}</div>
-                  </div>
-                </div>
-
-                <p className="text-stone-600 leading-relaxed mb-5">{productLines[activeProduct].description}</p>
-
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="inline-flex items-center gap-1.5 bg-white border border-stone-200 text-stone-600 text-sm font-medium px-3 py-1.5 rounded-full">
-                    <Ruler className="w-4 h-4 text-brand-600" /> Bitolas: {productLines[activeProduct].bitolas}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 bg-white border border-stone-200 text-stone-600 text-sm font-medium px-3 py-1.5 rounded-full">
-                    {productLines[activeProduct].options}
-                  </span>
-                </div>
-
-                <ul className="space-y-2 mb-7">
-                  {productLines[activeProduct].uses.map((use) => (
-                    <li key={use} className="flex items-center gap-2.5 text-stone-700 font-medium">
-                      <CheckCircle2 className="w-5 h-5 text-brand-500 shrink-0" /> {use}
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="flex flex-col sm:flex-row gap-3 pt-5 border-t border-stone-200">
-                  <a
-                    href={`https://wa.me/5515996854945?text=${encodeURIComponent(`Olá! Gostaria de um orçamento de ${productLines[activeProduct].name}.`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-[#A1C913] text-[#183e26] px-6 py-3 rounded-full font-bold text-sm hover:bg-[#8eb311] transition-colors flex items-center justify-center gap-2"
-                  >
-                    <MessageCircle className="w-4 h-4" /> Pedir orçamento
-                  </a>
-                  <button
-                    onClick={() => setIsCatalogModalOpen(true)}
-                    className="px-6 py-3 rounded-full font-bold text-sm text-stone-600 hover:text-brand-700 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Ruler className="w-4 h-4" /> Tabela de medidas e pesos
-                  </button>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
       {/* Sobre / About Section */}
       <section id="sobre" className="py-24 bg-stone-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
