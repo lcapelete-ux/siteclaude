@@ -2,17 +2,17 @@ import React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Ruler, Weight, ChevronRight } from "lucide-react";
 
-export interface CatalogItem {
+interface CatalogItem {
   name: string;
   weight: string;
 }
 
-export interface CatalogCategory {
+interface CatalogCategory {
   title: string;
   items: CatalogItem[];
 }
 
-export const catalogData: CatalogCategory[] = [
+const catalogData: CatalogCategory[] = [
   {
     title: "Mourões (2,20m)",
     items: [

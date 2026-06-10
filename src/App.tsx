@@ -19,6 +19,13 @@ import {
   Star,
   Send,
   Loader2,
+  Fence,
+  Logs,
+  Warehouse,
+  UtilityPole,
+  Trees,
+  Layers,
+  MessageCircle,
 } from "lucide-react";
 import AdminDashboard from "./components/AdminDashboard";
 import AdminLoginModal from "./components/AdminLoginModal";
@@ -624,6 +631,7 @@ export default function App() {
             </div>
 
             <div className="hidden md:flex space-x-8 items-center">
+              <a href="#produtos" className="text-stone-200 hover:text-white font-medium transition-colors">Produtos</a>
               <a href="#sobre" className="text-stone-200 hover:text-white font-medium transition-colors">Sobre</a>
               <a href="#citriodora" className="text-stone-200 hover:text-white font-medium transition-colors">Citriodora</a>
               <a href="#processo" className="text-stone-200 hover:text-white font-medium transition-colors">Processo</a>
@@ -653,6 +661,7 @@ export default function App() {
             >
               <div className="px-4 pt-2 pb-4 space-y-1">
                 {[
+                  { href: "#produtos", label: "Produtos" },
                   { href: "#sobre", label: "Sobre" },
                   { href: "#citriodora", label: "Citriodora" },
                   { href: "#processo", label: "Processo" },
@@ -756,6 +765,117 @@ export default function App() {
             </div>
             <div className="text-brand-200 font-medium">madeira de reflorestamento</div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Produtos / Product Lines Section */}
+      <section id="produtos" className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div className="text-center max-w-3xl mx-auto mb-16" {...fadeIn}>
+            <span className="inline-block text-brand-600 font-bold tracking-wider uppercase text-sm mb-3">
+              Nossos Produtos
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-stone-900 mb-4">
+              Madeira tratada para <span className="text-brand-600">cada necessidade</span>
+            </h2>
+            <p className="text-lg text-stone-600 leading-relaxed">
+              Da cerca da fazenda ao poste de eletrificação: Eucalyptus Citriodora autoclavado com CCA,
+              durabilidade de 20 a 30 anos e garantia de 10 anos. Peça seu orçamento direto pelo WhatsApp.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: <Fence className="w-7 h-7" />,
+                name: "Mourões",
+                sizes: "2,20 m",
+                options: "6 bitolas (4 a 14 cm)",
+                description: "A base da cerca rural. Resistem décadas fincados no solo, do refugo ao super grosso.",
+                highlight: true,
+              },
+              {
+                icon: <Logs className="w-7 h-7" />,
+                name: "Esticadores",
+                sizes: "2,50 m",
+                options: "10 bitolas (10 a 32 cm)",
+                description: "Para cantos e reforço da cerca: aguentam toda a tração dos fios sem ceder.",
+              },
+              {
+                icon: <Warehouse className="w-7 h-7" />,
+                name: "Palanques",
+                sizes: "3,20 m a 7 m",
+                options: "+50 medidas",
+                description: "Currais, mangueiros, barracões e estruturas que exigem altura e robustez.",
+              },
+              {
+                icon: <UtilityPole className="w-7 h-7" />,
+                name: "Postes",
+                sizes: "8 m a 12 m",
+                options: "+45 medidas",
+                description: "Eletrificação rural, iluminação e telefonia, dentro do padrão ABNT NBR 9480.",
+              },
+              {
+                icon: <Trees className="w-7 h-7" />,
+                name: "Varas",
+                sizes: "2,50 m a 8 m",
+                options: "17 medidas",
+                description: "Pergolados, hortas, estufas, cercas de madeira roliça e construções leves.",
+              },
+              {
+                icon: <Layers className="w-7 h-7" />,
+                name: "Madeira Serrada e Ripões",
+                sizes: "Por metro",
+                options: "Vigas, pranchas, caibros e ripas",
+                description: "Peças serradas sob medida para telhados, decks e acabamentos da sua obra.",
+              },
+            ].map((product) => (
+              <motion.div
+                key={product.name}
+                {...fadeIn}
+                whileHover={{ y: -6 }}
+                className={`relative flex flex-col bg-stone-50 rounded-3xl border p-7 shadow-sm hover:shadow-xl transition-shadow ${
+                  product.highlight ? "border-brand-400 ring-2 ring-brand-400/30" : "border-stone-200"
+                }`}
+              >
+                {product.highlight && (
+                  <div className="absolute -top-3 right-6 bg-[#A1C913] text-[#183e26] text-xs font-black tracking-wider px-3 py-1 rounded-full shadow-md">
+                    MAIS PEDIDO
+                  </div>
+                )}
+                <div className="flex items-center justify-between mb-5">
+                  <div className="w-14 h-14 rounded-2xl bg-[#183e26] text-[#A1C913] flex items-center justify-center">
+                    {product.icon}
+                  </div>
+                  <span className="text-sm font-bold text-brand-700 bg-brand-100 px-3 py-1 rounded-full">
+                    {product.sizes}
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-stone-900 mb-2">{product.name}</h3>
+                <p className="text-stone-600 leading-relaxed mb-4">{product.description}</p>
+                <div className="flex items-center gap-2 text-sm text-stone-500 font-medium mb-6">
+                  <Ruler className="w-4 h-4 text-brand-600" />
+                  {product.options}
+                </div>
+                <div className="mt-auto flex gap-3">
+                  <a
+                    href={`https://wa.me/5515996854945?text=${encodeURIComponent(`Olá! Gostaria de um orçamento de ${product.name}.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 bg-[#A1C913] text-[#183e26] px-4 py-2.5 rounded-full font-bold text-sm hover:bg-[#8eb311] transition-colors flex items-center justify-center gap-2"
+                  >
+                    <MessageCircle className="w-4 h-4" /> Orçamento
+                  </a>
+                  <button
+                    onClick={() => setIsCatalogModalOpen(true)}
+                    className="px-4 py-2.5 rounded-full font-bold text-sm border border-stone-300 text-stone-600 hover:border-brand-500 hover:text-brand-700 transition-colors"
+                  >
+                    Medidas
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
