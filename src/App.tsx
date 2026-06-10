@@ -126,20 +126,20 @@ const LoadingScreen = () => (
     initial={{ opacity: 1 }}
     exit={{ opacity: 0 }}
     transition={{ duration: 0.8, ease: "easeInOut" }}
-    className="fixed inset-0 z-[100] bg-[#183e26] flex flex-col items-center justify-center"
+    className="fixed inset-0 z-[100] bg-[#183e26] flex flex-col items-center justify-center overflow-hidden"
   >
-    <motion.div
-      initial={{ scale: 0.9, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{
-        duration: 0.8,
-        repeat: Infinity,
-        repeatType: "reverse"
-      }}
-      className="mb-8"
-    >
-      <Logo className="scale-150" />
-    </motion.div>
+    <div className="flex items-center gap-4 mb-10">
+      {/* Mourões empilhando, como numa madeireira */}
+      <div className="flex flex-col justify-between h-[64px] w-[76px]">
+        <div className="h-[14px] w-full rounded-sm bg-[#A1C913] animate-stack-mourao [animation-delay:0.6s]" />
+        <div className="h-[14px] w-full rounded-sm bg-[#A1C913] animate-stack-mourao [animation-delay:0.3s]" />
+        <div className="h-[14px] w-full rounded-sm bg-[#A1C913] animate-stack-mourao [animation-delay:0s]" />
+      </div>
+      <div className="flex flex-col justify-center">
+        <span className="text-[#FDF8E7] font-black text-[36px] sm:text-[44px] leading-[0.85] tracking-wide" style={{ fontFamily: 'Arial, sans-serif' }}>EUCALYPTUS</span>
+        <span className="text-[#A07855] text-[14px] sm:text-[17px] font-normal tracking-[0.5em] leading-none ml-[2px] mt-[8px]" style={{ fontFamily: 'Arial, sans-serif' }}>TRATADOS</span>
+      </div>
+    </div>
 
     <div className="w-48 h-1 bg-stone-800 rounded-full overflow-hidden">
       <motion.div

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { LogOut, Image as ImageIcon, Plus, Trash2, Edit2, LayoutTemplate, Loader2, X, Check, ZoomIn, GripVertical, BarChart2, Globe, Users, Calendar, Megaphone, ToggleLeft, ToggleRight, Database, ArrowRight } from "lucide-react";
+import { LogOut, Image as ImageIcon, Plus, Trash2, Edit2, LayoutTemplate, Loader2, X, Check, ZoomIn, GripVertical, BarChart2, Globe, Users, Calendar, Megaphone, ToggleLeft, ToggleRight, Database, ArrowRight, Boxes, Search, ChevronDown } from "lucide-react";
 import { SiteImages, OperationType, handleSupabaseError, GalleryItem } from "../App";
+import { catalogData } from "./CatalogModal";
 import { supabase, uploadImage } from "../supabase";
 import imageCompression from "browser-image-compression";
 import toast from "react-hot-toast";
@@ -159,7 +160,7 @@ export default function AdminDashboard({
   refreshGallery,
   userEmail = "fazendajt@gmail.com"
 }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<"principais" | "galeria" | "analytics" | "promo">("principais");
+  const [activeTab, setActiveTab] = useState<"principais" | "galeria" | "analytics" | "promo" | "estoque">("principais");
 
   const [activeGalleryCategory, setActiveGalleryCategory] = useState<GalleryCategory>("rural");
   const [activeMainCategory, setActiveMainCategory] = useState<keyof Omit<SiteImages, "gallery" | "_allSiteContent">>("hero");
@@ -204,6 +205,79 @@ export default function AdminDashboard({
       fetchVisits();
     }
   }, [activeTab]);
+
+  // Estoque (Stock) state
+  const [stockQuantities, setStockQuantities] = useState<Record<string, string>>({});
+  const [stockSearch, setStockSearch] = useState("");
+  const [isStockLoading, setIsStockLoading] = useState(false);
+  const [isSavingStock, setIsSavingStock] = useState(false);
+  const [openStockCategories, setOpenStockCategories] = useState<Set<string>>(new Set());
+
+  // Fetch stock data when estoque tab is active
+  useEffect(() => {
+    if (activeTab === "estoque") {
+      const fetchStock = async () => {
+        setIsStockLoading(true);
+        try {
+          if (supabase) {
+            const { data, error } = await supabase.from('stock').select('*');
+            if (error) throw error;
+            const quantities: Record<string, string> = {};
+            (data || []).forEach((row: any) => {
+              quantities[row.item_name] = String(row.quantity ?? 0);
+            });
+            setStockQuantities(quantities);
+          }
+        } catch (error) {
+          console.error("Error fetching stock:", error);
+          toast.error("Erro ao carregar o estoque.");
+        } finally {
+          setIsStockLoading(false);
+        }
+      };
+      fetchStock();
+    }
+  }, [activeTab]);
+
+  const toggleStockCategory = (title: string) => {
+    setOpenStockCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(title)) next.delete(title);
+      else next.add(title);
+      return next;
+    });
+  };
+
+  const handleStockQuantityChange = (itemName: string, value: string) => {
+    if (value !== "" && !/^\d*$/.test(value)) return;
+    setStockQuantities(prev => ({ ...prev, [itemName]: value }));
+  };
+
+  const handleSaveStock = async () => {
+    if (!supabase) {
+      toast.error("Supabase não configurado.");
+      return;
+    }
+    setIsSavingStock(true);
+    const toastId = toast.loading("Salvando estoque...");
+    try {
+      const rows = catalogData.flatMap(category =>
+        category.items.map(item => ({
+          item_name: item.name,
+          category: category.title,
+          quantity: parseInt(stockQuantities[item.name] || "0", 10) || 0,
+        }))
+      );
+      const { error } = await supabase.from('stock').upsert(rows, { onConflict: 'item_name' });
+      if (error) throw error;
+      toast.success("Estoque salvo com sucesso!", { id: toastId });
+    } catch (error) {
+      console.error("Error saving stock:", error);
+      toast.error("Erro ao salvar o estoque.", { id: toastId });
+    } finally {
+      setIsSavingStock(false);
+    }
+  };
 
   // Cropping State
   const [cropImage, setCropImage] = useState<{
@@ -660,6 +734,17 @@ export default function AdminDashboard({
             <BarChart2 className="w-5 h-5" />
             Relatórios de Acesso
           </button>
+          <button
+            onClick={() => setActiveTab("estoque")}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
+              activeTab === "estoque"
+                ? "bg-brand-600 text-white"
+                : "text-stone-300 hover:bg-stone-800"
+            }`}
+          >
+            <Boxes className="w-5 h-5" />
+            Estoque
+          </button>
         </nav>
         <div className="p-4 border-t border-stone-800">
           <button
@@ -677,16 +762,25 @@ export default function AdminDashboard({
         <div className="max-w-5xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-stone-900">
-              {activeTab === "principais" ? "Imagens Principais do Site" : activeTab === "galeria" ? "Gestão da Galeria" : activeTab === "promo" ? "Promoção e Pop-up" : "Relatórios de Acessos"}
+              {activeTab === "principais" ? "Imagens Principais do Site" : activeTab === "galeria" ? "Gestão da Galeria" : activeTab === "promo" ? "Promoção e Pop-up" : activeTab === "estoque" ? "Estoque de Produtos" : "Relatórios de Acessos"}
             </h1>
-            {activeTab !== "analytics" && activeTab !== "promo" && (
+            {activeTab === "estoque" ? (
+              <button
+                onClick={handleSaveStock}
+                disabled={isSavingStock || isStockLoading}
+                className="bg-brand-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-brand-600 transition-colors flex items-center gap-2 disabled:opacity-50"
+              >
+                {isSavingStock ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
+                {isSavingStock ? "Salvando..." : "Salvar Estoque"}
+              </button>
+            ) : activeTab !== "analytics" && activeTab !== "promo" && (
               <label className="bg-brand-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-brand-600 transition-colors flex items-center gap-2 cursor-pointer disabled:opacity-50">
                 {loading?.includes("upload") || loading === "new-gallery" ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5" />}
                 {loading?.includes("upload") || loading === "new-gallery" ? "Enviando..." : "Nova Imagem"}
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className="hidden" 
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
                   onChange={activeTab === "principais" ? handleUpdateMainImage(activeMainCategory) : handleAddGalleryImage}
                   disabled={!!loading}
                 />
@@ -1034,6 +1128,76 @@ export default function AdminDashboard({
                     </div>
                   </div>
                 </>
+              )}
+            </div>
+          ) : activeTab === "estoque" ? (
+            <div className="space-y-4">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
+                <input
+                  type="text"
+                  value={stockSearch}
+                  onChange={(e) => setStockSearch(e.target.value)}
+                  placeholder="Buscar produto pelo nome..."
+                  className="w-full pl-12 pr-4 py-3 rounded-xl border border-stone-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all bg-white"
+                />
+              </div>
+
+              {isStockLoading ? (
+                <div className="bg-white rounded-2xl p-12 flex flex-col items-center justify-center border border-stone-200 shadow-sm">
+                  <Loader2 className="w-12 h-12 text-brand-500 animate-spin mb-4" />
+                  <p className="text-stone-500 font-medium">Carregando estoque...</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {catalogData.map((category) => {
+                    const query = stockSearch.trim().toLowerCase();
+                    const items = category.items.filter((item) =>
+                      item.name.toLowerCase().includes(query)
+                    );
+                    if (items.length === 0) return null;
+                    const isOpen = query !== "" || openStockCategories.has(category.title);
+                    return (
+                      <div key={category.title} className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+                        <button
+                          onClick={() => toggleStockCategory(category.title)}
+                          className="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-stone-50 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-2 h-6 bg-brand-500 rounded-full" />
+                            <h3 className="font-bold text-stone-900">{category.title}</h3>
+                            <span className="text-xs font-medium text-stone-400">{items.length} itens</span>
+                          </div>
+                          <ChevronDown className={`w-5 h-5 text-stone-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                        </button>
+                        {isOpen && (
+                          <div className="divide-y divide-stone-100 border-t border-stone-100">
+                            {items.map((item) => (
+                              <div key={item.name} className="flex items-center justify-between gap-4 px-4 py-3">
+                                <span className="text-sm font-medium text-stone-700">{item.name}</span>
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  value={stockQuantities[item.name] ?? ""}
+                                  onChange={(e) => handleStockQuantityChange(item.name, e.target.value)}
+                                  placeholder="0"
+                                  className="w-24 px-3 py-2 rounded-lg border border-stone-300 text-right font-bold focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {catalogData.every((category) =>
+                    category.items.every((item) => !item.name.toLowerCase().includes(stockSearch.trim().toLowerCase()))
+                  ) && (
+                    <div className="bg-white rounded-2xl p-12 text-center text-stone-500 border border-stone-200 shadow-sm">
+                      Nenhum produto encontrado para "{stockSearch}".
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           ) : (

@@ -25,3 +25,35 @@
   --color-stone-900: #212529;
   --color-stone-950: #1a1d20;
 }
+
+/* Animação de carregamento: mourões/toras empilhando, como numa madeireira */
+@keyframes stack-mourao {
+  0% {
+    transform: translateY(-90px) rotate(-6deg);
+    opacity: 0;
+  }
+  18% {
+    transform: translateY(8px) rotate(2deg);
+    opacity: 1;
+  }
+  26% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  78% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  92% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-90px) rotate(-6deg);
+    opacity: 0;
+  }
+}
+
+.animate-stack-mourao {
+  animation: stack-mourao 2.4s ease-in-out infinite;
+}
