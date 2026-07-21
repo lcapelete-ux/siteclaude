@@ -15,6 +15,7 @@ View your app in AI Studio: https://ai.studio/apps/46dc1527-ea1d-42db-81b1-e05dc
 
 1. Install dependencies:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
+   # Landing page cercas added to public/cercas/
+3. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+4. Run the app:
    `npm run dev`
